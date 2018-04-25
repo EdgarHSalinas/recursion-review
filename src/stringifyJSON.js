@@ -2,19 +2,32 @@
 // var stringifyJSON = JSON.stringify;
 
 // but you don't so you're going to write it from scratch:
-
 var stringifyJSON = function(obj) {
-   
+
   if (Array.isArray(obj)) {
     var results = [];
-  
-  for(var i = 0; i < obj.length; i++) {
-    if(typeof obj[i] === 'string'){
-       results.push(stringifyJSON(obj[i]));  
+
+    for (var i = 0; i < obj.length; i++) {
+      results.push(stringifyJSON(obj[i]));
     }
-    return '[' + result.join(',') + ']'
+
+    return '[' + results.join(',') + ']';
   }
 
+  if (obj && typeof obj === 'object') {
+    var results = [];
+    
+    for (var key in obj) {
+      if (obj[key] === undefined || typeof (obj[key]) === 'function') {
+        continue;
+      }
+      results.push(stringifyJSON(key) + ':' + stringifyJSON(obj[key]));
+    }
+
+    return '{' + results.join(',') + '}';
   }
-   return '' + obj;
+  if (typeof obj === 'string') {
+    return '"' + obj + '"';
+  }
+  return '' + obj; // coerces 9, true/false, null to string
 };
